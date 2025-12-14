@@ -3,10 +3,14 @@ import processColumn from "./processColumn";
 import analyser from "./sentimentAnalisis";
 import themeExtractor from "./themeExtraction";
 import statsCalc from "./statsCalc";
+import actionsPredictor from "./actionsPredictor";
+import { useSession } from "next-auth/react";
+
 
 export async function POST(req) {
   const data = await req.json();
-  const infos = [...data.result];//har ek response ka array[{phele res},{dusra res}....]
+  const fileName = data.fileName
+  const infos = [...data.result]; //har ek response ka array[{phele res},{dusra res}....]
   //info[0] is a obj
   const freq = {};
   for (let key in infos[0]) {
@@ -19,18 +23,32 @@ export async function POST(req) {
   const result = {};
   const questions = await processColumn(freq);
   for (let question of questions) {
+    if (question.useful === false) continue;
     if (question.type === "text") {
       question.responses = Object.keys(freq[question.question]);
-      question.sentiment = analyser(freq,question);
-      question.theme = themeExtractor(freq,question,infos);
-
+      question.sentiment = analyser(freq, question);
+      question.theme = themeExtractor(freq, question, infos);
+      delete question.responses
     }
     if (question.type === "ordered_single_choice") {
-      const dist = freq[question.question];
-      const entries = Object.entries(dist);
+      const dist_t = freq[question.question];
+      const entries = Object.entries(dist_t);
+      //scale here i have the scal in question.scale
+      const labelToNumber = {};
+      for (let num in question.scale) {
+        labelToNumber[question.scale[num]] = Number(num);
+      }
+      for (let entry in entries) {
+        entries[entry][0] = labelToNumber[entries[entry][0]];
+      }
+      const dist = {};
+      for (let entry in dist_t) {
+        dist[labelToNumber[entry]] = dist_t[entry];
+      }
       question.distribution = dist;
-      const [values , stats] = statsCalc(entries);
-      question.values = values;
+
+      const [values, stats] = statsCalc(entries);
+      // question.values = values;
       question.stats = stats;
     }
 
@@ -72,6 +90,10 @@ export async function POST(req) {
     }
   }
   result.questions = questions;
+  result.actions = await actionsPredictor(questions);
+  result.fileName = fileName
+
+  //so now i hve to save the result in db if user is logged in
 
   return NextResponse.json(result, { status: 200 });
 }

@@ -19,7 +19,7 @@ export default function statsCalc(entries) {
         if (count > bestCount) (mode = Number(value)), (bestCount = count);
       }
     const stats = {
-        average: average.toFixed(2),
+        average: Number(average.toFixed(2)),
         median,
         mode,
       };

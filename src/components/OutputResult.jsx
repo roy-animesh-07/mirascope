@@ -2,10 +2,13 @@ import {Chart as Chartjs} from "chart.js/auto"
 import {Bar,Doughnut,Line} from "react-chartjs-2"
 const OutputResult = ({data}) => {
   let res = data["questions"]
-  const filtered = res;
+  let actions = data["actions"]
   return (
     <div >
-  {filtered.map((q, i) => {
+  {res.map((q, i) => {
+    if(!q.useful) {
+      return <div key={i}></div>
+    }
     if(q.type ==="ordered_single_choice"){
     return (
       <div key={i}>
@@ -15,6 +18,11 @@ const OutputResult = ({data}) => {
           <li>Average: {q.stats.average}</li>
           <li>Median: {q.stats.median}</li>
           <li>Mode: {q.stats.mode}</li>
+        </ul>
+        <ul>
+          Scale:
+          {JSON.stringify(q.scale)}
+          
         </ul>
         <div className="w-100">
           {
@@ -131,6 +139,15 @@ else {
   )
 }
   })}
+  <div> Recommded actions: </div><br/>
+  {
+    actions.map((ac,i) => {
+      return <div key={i}>
+        <div>{ac.action}</div>
+        <div>{ac.confidence}</div>
+      </div>
+    })
+  }
 </div>
 
   )

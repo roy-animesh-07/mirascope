@@ -3,13 +3,15 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { useState } from "react";
 import OutputResult from "@/components/OutputResult";
+import { useSession } from "next-auth/react";
 
 
 export default function Home() {
   const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
   const [showData, setShowData] = useState(false);
-
+  const {data:session} = useSession();
+  
   const handleUpload = async (e) => {
     e.preventDefault();
 
@@ -33,6 +35,14 @@ export default function Home() {
     const processed = await finalres.json();
     setShowData(true);
     setResult(processed);
+    if(session) {
+      const saveReport = await fetch("/api/save",{
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(processed),
+      });
+      
+    }
   };
 
   return (
