@@ -2,24 +2,39 @@
 
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OutputResult from "@/components/OutputResult";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { Check } from "lucide-react";
 
 export default function Home() {
   const [file, setFile] = useState(null);
+  const [apikey,setApikey] = useState("");
+  const [haskey,setHaskey] = useState(false);
   const [result, setResult] = useState(null);
   const [showData, setShowData] = useState(false);
   const { data: session } = useSession();
-
+  useEffect(() => {
+    if(session) {
+      fetch("/api/userHasApiKey")
+      .then((res) => res.json())
+        .then((data) => {
+          setHaskey(data.hasKey);
+        });
+    }
+  },[session]);
   const handleUpload = async (e) => {
     e.preventDefault();
     if (!file) return alert("Upload a CSV first!");
 
     const form = new FormData();
     form.append("file", file);
-
+    form.append("apiKey", apikey);
+    if(!haskey && !apikey) {
+      alert("No api key!!");
+      return;
+    }
     const res = await fetch("/api/upload", {
       method: "POST",
       body: form,
@@ -97,13 +112,27 @@ export default function Home() {
             </div>
 
             <div className="bg-gray-50 border rounded-2xl p-8 shadow-sm">
+
               <h2 className="text-2xl font-semibold mb-2">
                 Upload your CSV
               </h2>
               <p className="text-sm text-gray-600 mb-6">
                 Works with large survey files and mixed question types.
               </p>
-
+                <p>Enter Your Api Key</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    disabled={haskey}
+                    value={haskey ? "API key saved" : apikey}
+                    onChange={(e) => setApikey(e.target.value)}
+                    className={`border mb-2 px-2 py-1 rounded ${
+                      haskey ? "bg-gray-100 text-gray-500 cursor-not-allowed" : ""
+                    }`}
+                  />
+                {haskey && <Check/>}
+                </div>
+                
               <input
                 type="file"
                 onChange={(e) => setFile(e.target.files[0])}

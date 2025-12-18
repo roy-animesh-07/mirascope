@@ -5,6 +5,7 @@ export async function POST(req) {
   try {
     const formData = await req.formData();
     const file = formData.get("file");
+    const apiKey = formData.get("apiKey");
 
     if (!file) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
@@ -23,7 +24,7 @@ export async function POST(req) {
     }));
     const fileName = file.name;
 
-    return NextResponse.json({ result,fileName });
+    return NextResponse.json({ result,fileName,apiKey });
 
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });

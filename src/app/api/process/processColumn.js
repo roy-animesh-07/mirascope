@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 const ai = new GoogleGenAI({});
 
-async function qtypebygpt(freq) {
+async function qtypebygpt(freq, apiKey) {
   const questionsArr = [];
 
   for (let key in freq) {

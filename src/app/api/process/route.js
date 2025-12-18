@@ -4,12 +4,30 @@ import analyser from "./sentimentAnalisis";
 import themeExtractor from "./themeExtraction";
 import statsCalc from "./statsCalc";
 import actionsPredictor from "./actionsPredictor";
-import { useSession } from "next-auth/react";
-
+import { getServerSession } from "next-auth";
+import connectToDatabase from "@/lib/mongodb";
+import User from "@/models/User";
 
 export async function POST(req) {
+  const session = await getServerSession();
+
   const data = await req.json();
   const fileName = data.fileName
+  let apiKey = data.apiKey;
+  let dataK = {};
+
+  if(session) {
+    await connectToDatabase();
+    const user = await User.findOne({ email: session.user.email })
+    if (user?.apiKey) {
+      apiKey = user.apiKey;
+    }
+    else {
+      user.apikey = apiKey;
+      await user.save();
+    }
+  }
+
   const infos = [...data.result]; //har ek response ka array[{phele res},{dusra res}....]
   //info[0] is a obj
   const freq = {};
@@ -21,7 +39,7 @@ export async function POST(req) {
     freq[key] = Object.fromEntries(mp);
   }
   const result = {};
-  const questions = await processColumn(freq);
+  const questions = await processColumn(freq,apiKey);
   for (let question of questions) {
     if (question.useful === false) continue;
     if (question.type === "text") {
@@ -90,7 +108,7 @@ export async function POST(req) {
     }
   }
   result.questions = questions;
-  result.actions = await actionsPredictor(questions);
+  result.actions = await actionsPredictor(questions, apiKey);
   result.fileName = fileName
 
   //so now i hve to save the result in db if user is logged in

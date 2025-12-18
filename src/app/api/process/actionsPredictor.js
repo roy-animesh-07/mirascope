@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 const ai = new GoogleGenAI({});
 
-async function aiActions(report_data) {
+async function aiActions(report_data, apiKey) {
   const prompt = `
 You are an expert product and data analyst.
 

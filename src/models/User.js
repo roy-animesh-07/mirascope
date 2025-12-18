@@ -7,6 +7,10 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, unique: true, sparse: true, lowercase: true },
 
     password: String, 
+    apikey: {
+      type: String,
+      default: "",
+    },
 
     provider: String, 
     providerId: String, 
