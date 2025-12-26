@@ -46,6 +46,8 @@ export async function POST(req) {
   }
   const result = {};
   const questions = await processColumn(freq,apiKey);
+  console.log(typeof questions);
+  console.log(questions);
   for (let question of questions) {
     if (question.useful === false) continue;
     if (question.type === "text") {
@@ -115,6 +117,8 @@ export async function POST(req) {
   }
   result.questions = questions;
   result.actions = await actionsPredictor(questions, apiKey);
+  console.log(typeof result.actions)
+  console.log(result.actions);
   result.fileName = fileName
 
   //so now i hve to save the result in db if user is logged in
