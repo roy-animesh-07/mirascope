@@ -46,7 +46,7 @@ ${JSON.stringify(report_data)}
   
   return JSON.parse(response.text);
 }
-export default async function actionsPredictor(questions) {
+export default async function actionsPredictor(questions,apiKey) {
   const report_data = [];
   for (let q of questions) {
     const data = {};
@@ -68,6 +68,6 @@ export default async function actionsPredictor(questions) {
     }
   }
 
-  const actions = await aiActions(report_data);
+  const actions = await aiActions(report_data,apiKey);
   return actions;
 }

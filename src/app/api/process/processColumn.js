@@ -80,6 +80,6 @@ ${JSON.stringify(questionsArr)}
   return JSON.parse(response.text);
 }
 
-export default async function processColumn(freq) {
-  return await qtypebygpt(freq);
+export default async function processColumn(freq,apiKey) {
+  return await qtypebygpt(freq,apiKey);
 }
