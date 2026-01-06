@@ -19,11 +19,11 @@
 ---
 
 ##  Screenshots
-Home Page
+1)Home Page
 ![Home Page](public/screenshots/home.png)
-Dashboard page
+2)Dashboard page
 ![Dashboard Page](public/screenshots/dashboard.png)
-Report page
+3)Report page
 ![Report Page](public/screenshots/report.png)
 
 ---
@@ -147,8 +147,3 @@ Contributions welcome — open an issue or a PR with clear steps or a failing te
 
 ---
 
-##  License
-
-Specify a license (e.g., MIT) by adding a `LICENSE` file.
-
----
