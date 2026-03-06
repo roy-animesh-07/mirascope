@@ -10,6 +10,10 @@ export default function analyser(freq,question) {
     else if (intensity.compound >= -0.05) net += freq[question.question][res];
     else neg += freq[question.question][res];
   }
+  let tot = pos + neg + net;
+  pos = Number(((pos / tot) * 100).toFixed(2));
+  neg = Number(((neg / tot) * 100).toFixed(2));
+  net = Number(((net / tot) * 100).toFixed(2));
   const sentiment = {
     positive: pos,
     neutral: net,

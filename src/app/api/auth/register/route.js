@@ -22,6 +22,7 @@ export async function POST(req) {
 
     return new Response("User created", { status: 201 });
   } catch (err) {
+    console.log(err);
     return new Response("Error", { status: 500 });
   }
 }

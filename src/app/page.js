@@ -24,6 +24,10 @@ export default function Home() {
         });
     }
   },[session]);
+  useEffect(() => {
+    if(showData)
+    document.getElementById("result").scrollIntoView({ behavior: "smooth" });
+  }, [showData]);
   const handleUpload = async (e) => {
     e.preventDefault();
     if (!file) return alert("Upload a CSV first!");
@@ -49,7 +53,7 @@ export default function Home() {
 
     const processed = await finalres.json();
     setShowData(true);
-    setResult(processed);
+    setResult(processed); 
 
     if (session) {
       await fetch("/api/save", {
@@ -143,7 +147,8 @@ export default function Home() {
                 onClick={handleUpload}
                 className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-900 transition"
               >
-                <Link href={"#result"}>Generate Report</Link>
+                {/* <Link href={"#result"}>Generate Report</Link> */}
+                Generate Report
               </button>
             </div>
           </div>
